@@ -41,7 +41,7 @@ download() {
     mkdir -p download
     (
         cd download/
-        xargs -n1 curl -O <<EOF
+        xargs -n1 curl -LO <<EOF
 https://curl.haxx.se/download/curl-$CURL_VERSION.tar.xz
 https://mirrors.edge.kernel.org/pub/software/scm/git/git-$GIT_VERSION.tar.xz
 https://www.musl-libc.org/releases/musl-$MUSL_VERSION.tar.gz
