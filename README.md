@@ -1,17 +1,14 @@
 # Lean, static Git build for Linux
 
-This script builds Git from source, statically linked against OpenSSL.
+This script builds Git and all of its native dependencies from source
+with static linking. OpenSSL is linked instead of GnuTLS. The build time
+dependencies are GCC and Python 2 (for AsciiDoc). Perl 5 is required at
+run time.
 
-The installation prefix is hardcoded in the binaries, so the build
-*probably* should not be moved around, but, outside of `help`, it seems
-to work fine anyway. Due to static linking, the binaries will work on
-any Linux system with the same architecture so long as it's been
-installed to the same prefix. The script's `-p` option controls the
-install prefix, which defaults to `$PWD/git/`. The `-d` option sets
-`DESTDIR` to stage for packaging.
-
-If AsciiDoc is installed, the documentation will also be built and
-installed.
+Due to static linking, the binaries will work on any Linux system with
+the same architecture so long as it's been installed to the same prefix.
+The script's `-p` option controls the install prefix, which defaults to
+`$PWD/git/`. The `-d` option sets `DESTDIR` to stage for packaging.
 
 ## Usage
 

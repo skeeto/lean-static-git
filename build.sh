@@ -2,12 +2,14 @@
 
 set -xe
 
+ASCIIDOC_VERSION=8.6.9
+CURL_VERSION=7.65.3
+EXPAT_VERSION=2.2.7   # Note: download URL is unpredictable
 GIT_VERSION=2.22.1
 MUSL_VERSION=1.1.23
-CURL_VERSION=7.65.3
 OPENSSL_VERSION=1.1.1c
 ZLIB_VERSION=1.2.11
-EXPAT_VERSION=2.2.7   # Note: download URL is unpredictable
+XMLTO_VERSION=0.0.28
 
 DESTDIR=
 PREFIX="$PWD/git"
@@ -46,6 +48,8 @@ https://www.musl-libc.org/releases/musl-$MUSL_VERSION.tar.gz
 https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz
 https://www.zlib.net/zlib-$ZLIB_VERSION.tar.xz
 https://github.com/libexpat/libexpat/releases/download/R_2_2_7/expat-$EXPAT_VERSION.tar.xz
+https://sourceforge.net/projects/asciidoc/files/asciidoc/$ASCIIDOC_VERSION/asciidoc-$ASCIIDOC_VERSION.tar.gz
+https://releases.pagure.org/xmlto/xmlto-$XMLTO_VERSION.tar.bz2
 EOF
     )
 }
@@ -142,6 +146,27 @@ tar -C "$WORK" -xJf download/expat-$EXPAT_VERSION.tar.xz
     make install
 )
 
+tar -C "$WORK" -xzf download/asciidoc-$ASCIIDOC_VERSION.tar.gz
+(
+    cd "$WORK/asciidoc-$ASCIIDOC_VERSION"
+    ./configure \
+        CC="$WORK/deps/bin/musl-gcc" \
+        --prefix="$WORK/deps"
+    make -kj$NJOBS
+    make install
+)
+
+tar -C "$WORK" -xjf download/xmlto-$XMLTO_VERSION.tar.bz2
+(
+    mkdir -p "$WORK/xmlto"
+    cd "$WORK/xmlto"
+    ../xmlto-$XMLTO_VERSION/configure \
+        CC="$WORK/deps/bin/musl-gcc" \
+        --prefix="$WORK/deps"
+    make -kj$NJOBS
+    make install
+)
+
 tar -C "$WORK" -xJf download/git-$GIT_VERSION.tar.xz
 (
     cd "$WORK/git-$GIT_VERSION"
@@ -156,8 +181,6 @@ tar -C "$WORK" -xJf download/git-$GIT_VERSION.tar.xz
         LIBS='-lz -lcurl -lssl -lcrypto'
     make CURL_LIBCURL='-lcurl -lssl -lcrypto' -kj$NJOBS
     make CURL_LIBCURL='-lcurl -lssl -lcrypto' install
-    if command -v asciidoc > /dev/null 2>&1; then
-        make -kj$NJOBS doc
-        make install-doc
-    fi
+    PATH="$WORK/deps/bin:$PATH" make -kj$NJOBS doc
+    PATH="$WORK/deps/bin:$PATH" make install-doc
 )
