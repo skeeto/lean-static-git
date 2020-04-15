@@ -2,14 +2,11 @@
 
 set -xe
 
-ASCIIDOC_VERSION=8.6.9
 CURL_VERSION=7.65.3
 EXPAT_VERSION=2.2.7   # Note: download URL is unpredictable
 GIT_VERSION=2.26.0
 MUSL_VERSION=1.1.23
 OPENSSL_VERSION=1.1.1f
-PYTHON_VERSION=2.7.17
-XMLTO_VERSION=0.0.28
 ZLIB_VERSION=1.2.11
 
 DESTDIR=
@@ -43,14 +40,11 @@ download() {
     (
         cd download/
         xargs -n1 curl -LO <<EOF
-https://sourceforge.net/projects/asciidoc/files/asciidoc/$ASCIIDOC_VERSION/asciidoc-$ASCIIDOC_VERSION.tar.gz
 https://curl.haxx.se/download/curl-$CURL_VERSION.tar.xz
 https://github.com/libexpat/libexpat/releases/download/R_2_2_7/expat-$EXPAT_VERSION.tar.xz
 https://mirrors.edge.kernel.org/pub/software/scm/git/git-$GIT_VERSION.tar.xz
 https://www.musl-libc.org/releases/musl-$MUSL_VERSION.tar.gz
 https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz
-https://www.python.org/ftp/python/2.7.17/Python-$PYTHON_VERSION.tar.xz
-https://releases.pagure.org/xmlto/xmlto-$XMLTO_VERSION.tar.bz2
 https://www.zlib.net/zlib-$ZLIB_VERSION.tar.xz
 EOF
     )
@@ -77,19 +71,6 @@ if [ ! -d download/ ]; then
 fi
 
 mkdir -p "$DESTDIR$PREFIX" "$WORK/deps"
-
-# Due to an old bug in Python's build scripts, Python MUST be installed
-# before musl. The build is sensitive to the contents at the install
-# prefix, even before activating the "install" target.
-tar -C "$WORK" -xJf download/Python-$PYTHON_VERSION.tar.xz
-(
-    cd "$WORK/Python-$PYTHON_VERSION"
-    ./configure \
-        --without-gcc \
-        --prefix="$WORK/deps"
-    make -kj$NJOBS
-    make install
-)
 
 tar -C "$WORK" -xzf download/musl-$MUSL_VERSION.tar.gz
 (
@@ -161,26 +142,6 @@ tar -C "$WORK" -xJf download/expat-$EXPAT_VERSION.tar.xz
     make install
 )
 
-tar -C "$WORK" -xzf download/asciidoc-$ASCIIDOC_VERSION.tar.gz
-(
-    cd "$WORK/asciidoc-$ASCIIDOC_VERSION"
-    PATH="$WORK/deps/bin:$PATH"
-    ./configure \
-        --prefix="$WORK/deps"
-    make -kj$NJOBS
-    make install
-)
-
-tar -C "$WORK" -xjf download/xmlto-$XMLTO_VERSION.tar.bz2
-(
-    mkdir -p "$WORK/xmlto"
-    cd "$WORK/xmlto"
-    ../xmlto-$XMLTO_VERSION/configure \
-        --prefix="$WORK/deps"
-    make -kj$NJOBS
-    make install
-)
-
 tar -C "$WORK" -xJf download/git-$GIT_VERSION.tar.xz
 (
     cd "$WORK/git-$GIT_VERSION"
@@ -196,6 +157,4 @@ tar -C "$WORK" -xJf download/git-$GIT_VERSION.tar.xz
         LIBS='-lz -lcurl -lssl -lcrypto'
     make CURL_LIBCURL='-lcurl -lssl -lcrypto' -kj$NJOBS
     make CURL_LIBCURL='-lcurl -lssl -lcrypto' install
-    make -kj$NJOBS doc
-    make install-doc
 )
