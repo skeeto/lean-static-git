@@ -2,11 +2,11 @@
 
 set -xe
 
-CURL_VERSION=7.65.3
-EXPAT_VERSION=2.2.7   # Note: download URL is unpredictable
-GIT_VERSION=2.26.0
-MUSL_VERSION=1.1.23
-OPENSSL_VERSION=1.1.1f
+CURL_VERSION=7.76.0
+EXPAT_VERSION=2.3.0   # Note: download URL is unpredictable
+GIT_VERSION=2.31.1
+MUSL_VERSION=1.2.2
+OPENSSL_VERSION=1.1.1k
 ZLIB_VERSION=1.2.11
 
 DESTDIR=
@@ -41,7 +41,7 @@ download() {
         cd download/
         xargs -n1 curl -LO <<EOF
 https://curl.haxx.se/download/curl-$CURL_VERSION.tar.xz
-https://github.com/libexpat/libexpat/releases/download/R_2_2_7/expat-$EXPAT_VERSION.tar.xz
+https://github.com/libexpat/libexpat/releases/download/R_2_3_0/expat-$EXPAT_VERSION.tar.xz
 https://mirrors.edge.kernel.org/pub/software/scm/git/git-$GIT_VERSION.tar.xz
 https://www.musl-libc.org/releases/musl-$MUSL_VERSION.tar.gz
 https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz
