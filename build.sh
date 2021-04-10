@@ -80,7 +80,7 @@ tar -C "$WORK" -xzf download/musl-$MUSL_VERSION.tar.gz
         --prefix="$WORK/deps" \
         --enable-wrapper=gcc \
         --syslibdir="$WORK/deps/lib"
-    make -kj$NJOBS
+    make -j$NJOBS
     make install
 )
 
@@ -91,7 +91,7 @@ tar -C "$WORK" -xJf download/zlib-$ZLIB_VERSION.tar.xz
     ../zlib-$ZLIB_VERSION/configure \
         --prefix="$WORK/deps" \
         --static
-    make -kj$NJOBS
+    make -j$NJOBS
     make install
 )
 
@@ -108,7 +108,7 @@ tar -C "$WORK" -xzf download/openssl-$OPENSSL_VERSION.tar.gz
         --openssldir="$WORK/deps" \
         linux-x86_64 \
         no-shared
-    make -kj$NJOBS
+    make -j$NJOBS
     make install
 )
 
@@ -122,7 +122,7 @@ tar -C "$WORK" -xJf download/curl-$CURL_VERSION.tar.xz
         --enable-static \
         --disable-shared \
         --with-ssl="$WORK/deps"
-    make -kj$NJOBS
+    make -j$NJOBS
     make install
 )
 
@@ -138,7 +138,7 @@ tar -C "$WORK" -xJf download/expat-$EXPAT_VERSION.tar.xz
         --without-docbook \
         --without-tests \
         --without-examples
-    make -kj$NJOBS
+    make -j$NJOBS
     make install
 )
 
@@ -155,6 +155,6 @@ tar -C "$WORK" -xJf download/git-$GIT_VERSION.tar.xz
         --with-expat="$WORK/deps" \
         LDFLAGS='-static -s' \
         LIBS='-lz -lcurl -lssl -lcrypto'
-    make CURL_LIBCURL='-lcurl -lssl -lcrypto' -kj$NJOBS
+    make CURL_LIBCURL='-lcurl -lssl -lcrypto' -j$NJOBS
     make CURL_LIBCURL='-lcurl -lssl -lcrypto' install
 )
