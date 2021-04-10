@@ -103,7 +103,9 @@ tar -C "$WORK" -xzf download/openssl-$OPENSSL_VERSION.tar.gz
     mkdir -p "$WORK/openssl"
     cd "$WORK/openssl"
     ../openssl-$OPENSSL_VERSION/Configure \
-        CC="$WORK/deps/bin/musl-gcc -idirafter /usr/include/" \
+        CC="$WORK/deps/bin/musl-gcc \
+              -idirafter /usr/include \
+              -idirafter /usr/include/x86_64-linux-gnu" \
         --prefix="$WORK/deps" \
         --openssldir="$WORK/deps" \
         linux-x86_64 \
